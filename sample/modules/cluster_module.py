@@ -32,16 +32,6 @@ def getTagsFromCSV(path):
 
 # Get a list of all the possible verb-noun couples in the database
 def buildPairs(verbsData, nounsData):
-	'''
-	verbs = []
-	nouns = []
-	for cluster in verbsData:
-		for v in cluster:
-			verbs.append(v)
-	for cluster in nounsData:
-		for n in cluster:
-			nouns.append(n)
-	'''
 	return [(v, n) for v in verbsData for n in nounsData]
 
 
@@ -84,4 +74,3 @@ def test():
 	tags = getTagsFromCSV(TROFI_TAGS)
 	results = tagPairs(verbs, nouns, tags)
 	writeToCSV(results, RESULTS, ["verb", "noun", "tag", "confidence"])
-	print(results)
