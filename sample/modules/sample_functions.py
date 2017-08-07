@@ -80,6 +80,31 @@ def adjNounFinder(annotatedText):
 
 	return candidates
 
+# TODO: Write function for dependency beforehand !!!!
+def verbObjFinder(annotatedText):
+	candidates = CandidateGroup()
+	text = annotatedText.getText()
+
+	parser = StanfordDependencyParser()
+	lemmatizer = WordNetLemmatizer()
+	dependency_tree = [list(line.triples()) for line in parser.raw_parse(text)]
+	dependencies = dependency_tree[0]
+	verbLemma = ""
+	obj = ""
+	currentIndex = 0
+	for dep in dependencies:
+		if annotatedText.getElement(currentIndex, "word") in [',', ';', '-', '.', '?', '!']:
+			currentIndex += 1
+
+		if  "VB" in dep[0][1]:
+			verbLemma = lemmatizer.lemmatize(dep[0][0], wordnet.VERB)
+			verbIndex = currentIndex
+			if ("obj" in dep[1] or "nsubjpass" in dep[1]):
+				obj = dep[2][0]
+				# NEED TO BE ABLE TO CREATE CANDIDATE FROM WORDS INSTEAD OF INDEXES
+				#newCandidate = MetaphorCandidate(annotatedText, objIndex, (objIndex, objIndex), )
+		currentIndex += 1
+
 
 def testLabelFunction(candidates):
 	results = LabeledMetaphorList()

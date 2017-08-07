@@ -1,7 +1,7 @@
 from modules.datastructs.clustered_data import ClusteredData
 from modules.parsing_functions import parseVerbNet, parseNouns, parseTroFi
 from modules.utils import writeToCSV
-from modules.cluster_module import test
+from modules.cluster_module import buildDB
 from nltk.parse.stanford import StanfordDependencyParser
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import wordnet
@@ -11,6 +11,7 @@ import csv
 
 FIRST_CLUSTER = 2
 LAST_CLUSTER = 3
+BUILD_TROFI = False
 
 # Find the object of a verb in a sentence
 def getObj(sentence, verb):
@@ -68,7 +69,7 @@ def getVerbObjTags(data, first, last):
 				verbObjTags[verbObjKey].append(currentTag)
 				print("(" + verbObjKey[0] + ", " + verbObjKey[1] + "): " + currentTag)
 	return verbObjTags
-
+'''
 # Get the  tags from a CSV file constructed with the previous function
 def getTagsFromCSV(path):
 	verbObjTags = {}
@@ -125,7 +126,7 @@ def resultsToCSV(results):
 		newDict["Confidence"] = results[vn][1]
 		dictList.append(newDict)
 	writeToCSV(dictList, "data/cluster_results.csv", ["Verb", "Noun", "Label", "Confidence"])
-
+'''
 # Export the tags to a CSV file
 def tagsToCSV(tags):
 	dictList = []
@@ -139,30 +140,25 @@ def tagsToCSV(tags):
 	writeToCSV(dictList, "data/trofi_tags_bis.csv", ["Verb", "Noun", "Labels"])
 
 if __name__ == '__main__':
-	'''
-	data1 = ClusteredData.fromFile("data/clustering/verbnet_150_50_200.log-preprocessed", parseVerbNet)
-	#print(data1.getClusterContent("3", "words"))
-	#
-	data2 = ClusteredData.fromFile("data/clustering/200_2000.log-preprocessed", parseNouns)
-	#print(data2.getClusterContent("3", "words"))
-	#
-	data3 = ClusteredData.fromFile("data/clustering/TroFiExampleBase.txt", parseTroFi)
+	if BUILD_TROFI:
 	
-	first = FIRST_CLUSTER
-	last = LAST_CLUSTER
-	if len(sys.argv) >= 3:
-		first = int(sys.argv[1])
-		last = int(sys.argv[2])
-	tags = getVerbObjTags(data3, first, last)
-	#tags = getTagsFromCSV("data/trofi_tags_bis.csv")
-	print(tags)
-	tagsToCSV(tags)
-	verbNouns = getVerbNouns(data1, data2)
-	results = tagVerbNouns(tags, verbNouns)
-	print(results)
-	print("\n")
-	
-	resultsToCSV(results)
-	'''
-	test()
+		data1 = ClusteredData.fromFile("data/clustering/verbnet_150_50_200.log-preprocessed", parseVerbNet)
+		#print(data1.getClusterContent("3", "words"))
+		#
+		data2 = ClusteredData.fromFile("data/clustering/200_2000.log-preprocessed", parseNouns)
+		#print(data2.getClusterContent("3", "words"))
+		#
+		data3 = ClusteredData.fromFile("data/clustering/TroFiExampleBase.txt", parseTroFi)
+		
+		first = FIRST_CLUSTER
+		last = LAST_CLUSTER
+		if len(sys.argv) >= 3:
+			first = int(sys.argv[1])
+			last = int(sys.argv[2])
+		tags = getVerbObjTags(data3, first, last)
+		#tags = getTagsFromCSV("data/trofi_tags_bis.csv")
+		print(tags)
+		tagsToCSV(tags)
+
+	buildDB()
 

@@ -10,6 +10,7 @@ TROFI_TAGS = "data/clustering/trofi_tags_full.csv"
 
 RESULTS = "data/clustering/results.csv"
 
+# Parse the verbnet and noun databases
 def getVerbNouns(verbPath, nounPath):
 	verbData = WordClusterList.fromFile(verbPath, parseVerbNet)
 	#print(data1)
@@ -19,7 +20,7 @@ def getVerbNouns(verbPath, nounPath):
 	#
 	return [verbData, nounData]
 
-# Get the  tags from a CSV file
+# Get the  tags from a CSV file (trofi full)
 def getTagsFromCSV(path):
 	verbObjTags = {}
 	with open(path) as csvfile:
@@ -68,7 +69,7 @@ def tagPairs(verbsData, nounsData, tags):
 				results.append(currentResult)
 	return results
 
-def test():
+def buildDB():
 	verbs, nouns = getVerbNouns(VERBNET, NOUNS)
 	pairs = buildPairs(verbs, nouns)
 	tags = getTagsFromCSV(TROFI_TAGS)

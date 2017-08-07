@@ -16,6 +16,9 @@ class AnnotatedText:
 			currentWord["word"] = self.words[i]
 			self.table.append(currentWord)
 
+	def getText(self):
+		return self.rawText
+
 	def getLine(self, index):
 		return self.table[i]
 

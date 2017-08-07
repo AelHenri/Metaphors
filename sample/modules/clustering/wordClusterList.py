@@ -14,7 +14,7 @@ class WordClusterList:
 	def addCluster(self, name, content=[]):
 		self.clusters.append(name)
 		self.fullClusterDic[name] = []
-		self.doneClusterDic[name] = []
+		#self.doneClusterDic[name] = []
 		for word in content:
 			self.fullClusterDic[name].append(word)
 			self.wordList[word] = name
