@@ -25,7 +25,7 @@ def getObj(sentence, verb):
 		if  "VB" in dep[0][1]:
 			depVerbLemma = lemmatizer.lemmatize(dep[0][0], wordnet.VERB)
 			if (verbLemma == depVerbLemma and ("obj" in dep[1] or "nsubjpass" in dep[1])):
-				obj = dep[2][0]
+				obj = dep[2][0] #lemmatize the noun
 
 	return lemmatizer.lemmatize(obj, wordnet.NOUN) 
 
@@ -69,64 +69,7 @@ def getVerbObjTags(data, first, last):
 				verbObjTags[verbObjKey].append(currentTag)
 				print("(" + verbObjKey[0] + ", " + verbObjKey[1] + "): " + currentTag)
 	return verbObjTags
-'''
-# Get the  tags from a CSV file constructed with the previous function
-def getTagsFromCSV(path):
-	verbObjTags = {}
-	with open(path) as csvfile:
-		reader = csv.DictReader(csvfile)
-		for row in reader:
-			verb = row["Verb"]
-			noun = row["Noun"]
-			verbObjTags[(verb, noun)] = ast.literal_eval(row["Labels"])
-	return verbObjTags
 
-# Associate verb-nouns couples from the database with available and corresponding verb-object couples from the processed TroFi database,
-# and determine the final tag and confidence by counting the tags in the list.
-def tagVerbNouns(tags, verbNouns):
-	finalTags = {}
-	for couple in verbNouns:
-		if couple in tags.keys():
-			litterals = 0
-			nonlitterals = 0
-			for t in tags[couple]:
-				if t == "N":
-					nonlitterals+=1
-				elif t == "L":
-					litterals+=1
-			if nonlitterals > litterals:
-				finalTags[couple] = ("N", nonlitterals/(litterals+nonlitterals))
-			else:
-				finalTags[couple] = ("L", litterals/(litterals+nonlitterals))
-	return finalTags
-
-# Get a list of all the possible verb-noun couples in the database
-def getVerbNouns(verbsData, nounsData):
-	verbsData = ClusteredData.fromFile("data/clustering/verbnet_150_50_200.log-preprocessed", parseVerbNet)
-	nounsData = ClusteredData.fromFile("data/clustering/200_2000.log-preprocessed", parseNouns)
-	verbs = []
-	nouns = []
-	for cluster in verbsData.getEntries():
-		for v in verbsData.getClusterContent(cluster, "words"):
-			verbs.append(v)
-	for cluster in nounsData.getEntries():
-		for n in nounsData.getClusterContent(cluster, "words"):
-			nouns.append(n)
-	return [(v, n) for v in verbs for n in nouns]
-
-# Export the results to a CSV file
-def resultsToCSV(results):
-	dictList = []
-	verbNouns = results.keys()
-	for vn in verbNouns:
-		newDict = {}
-		newDict["Verb"] = vn[0]
-		newDict["Noun"] = vn[1]
-		newDict["Label"] = results[vn][0]
-		newDict["Confidence"] = results[vn][1]
-		dictList.append(newDict)
-	writeToCSV(dictList, "data/cluster_results.csv", ["Verb", "Noun", "Label", "Confidence"])
-'''
 # Export the tags to a CSV file
 def tagsToCSV(tags):
 	dictList = []
@@ -139,7 +82,10 @@ def tagsToCSV(tags):
 		dictList.append(newDict)
 	writeToCSV(dictList, "data/trofi_tags_bis.csv", ["Verb", "Noun", "Labels"])
 
+
 if __name__ == '__main__':
+	# Uncomment to build the TroFi database
+	'''
 	if BUILD_TROFI:
 	
 		data1 = ClusteredData.fromFile("data/clustering/verbnet_150_50_200.log-preprocessed", parseVerbNet)
@@ -159,6 +105,6 @@ if __name__ == '__main__':
 		#tags = getTagsFromCSV("data/trofi_tags_bis.csv")
 		print(tags)
 		tagsToCSV(tags)
-
+	'''
 	buildDB()
 

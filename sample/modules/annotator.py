@@ -7,7 +7,7 @@ import re
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk import pos_tag, word_tokenize
 from nltk.corpus import wordnet
-from datastructs.annotated_text import AnnotatedText
+from .datastructs.annotated_text import AnnotatedText
 
 class Annotator:
 

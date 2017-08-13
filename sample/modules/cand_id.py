@@ -2,7 +2,7 @@
 # Latest revision : 01/17/2017
 
 # Class that identifies the metaphor candidates in the annotated text
-from datastructs.candidate_group import CandidateGroup
+from .datastructs.candidate_group import CandidateGroup
 
 class CandidateIdentifier:
 

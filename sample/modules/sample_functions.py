@@ -1,11 +1,11 @@
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk import pos_tag
 from nltk.corpus import wordnet
-from datastructs.annotated_text import AnnotatedText
-from datastructs.candidate_group import CandidateGroup
-from datastructs.metaphor_candidate import MetaphorCandidate
-from datastructs.labeled_metaphor_list import LabeledMetaphorList
-from datastructs.labeled_metaphor import LabeledMetaphor
+from .datastructs.annotated_text import AnnotatedText
+from .datastructs.candidate_group import CandidateGroup
+from .datastructs.metaphor_candidate import MetaphorCandidate
+from .datastructs.labeled_metaphor_list import LabeledMetaphorList
+from .datastructs.labeled_metaphor import LabeledMetaphor
 
 def getWordnetPos(tag):
 
@@ -80,7 +80,28 @@ def adjNounFinder(annotatedText):
 
 	return candidates
 
-# TODO: Write function for dependency beforehand !!!!
+# Finds the verb and the next noun in the sentence
+def verbNounFinder(annotatedText):
+	candidates = CandidateGroup()
+	POScolumn = annotatedText.getColumn("POS")
+	wordColumn = annotatedText.getColumn("word")
+	candidate = []
+	currentAdjectives = []
+	for i in range(len(POScolumn)-1):
+		if POScolumn[i].startswith('VB'):
+			currentVerbIndex = i
+			currentNounIndex = i
+			while (currentNounIndex < len(POScolumn) and wordColumn[currentNounIndex]!="." and not(POScolumn[currentNounIndex].startswith('NN'))):
+				currentNounIndex += 1
+			if currentNounIndex < len(POScolumn) and POScolumn[currentNounIndex].startswith('NN'):
+				newCandidate = MetaphorCandidate(annotatedText, currentVerbIndex, (currentVerbIndex, currentVerbIndex), currentNounIndex, (currentNounIndex, currentNounIndex))
+				candidates.addCandidate(newCandidate)
+
+	return candidates
+
+
+# TODO: Write function that finds a verb and its object using a dependancy parser
+'''
 def verbObjFinder(annotatedText):
 	candidates = CandidateGroup()
 	text = annotatedText.getText()
@@ -104,7 +125,7 @@ def verbObjFinder(annotatedText):
 				# NEED TO BE ABLE TO CREATE CANDIDATE FROM WORDS INSTEAD OF INDEXES
 				#newCandidate = MetaphorCandidate(annotatedText, objIndex, (objIndex, objIndex), )
 		currentIndex += 1
-
+'''
 
 def testLabelFunction(candidates):
 	results = LabeledMetaphorList()

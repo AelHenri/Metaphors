@@ -1,4 +1,4 @@
-from annotated_text import AnnotatedText
+from .annotated_text import AnnotatedText
 
 class MetaphorCandidate:
 

@@ -1,12 +1,12 @@
 from nltk.corpus import wordnet
-from datastructs.annotated_text import AnnotatedText
-from datastructs.candidate_group import CandidateGroup
-from datastructs.metaphor_candidate import MetaphorCandidate
-from datastructs.labeled_metaphor_list import LabeledMetaphorList
-from datastructs.labeled_metaphor import LabeledMetaphor
-from datastructs.ngrams import CollocationList, parseConcreteness, parseNgrams
-from datastructs.categories import Categories, parseCategories
-import utils
+from .datastructs.annotated_text import AnnotatedText
+from .datastructs.candidate_group import CandidateGroup
+from .datastructs.metaphor_candidate import MetaphorCandidate
+from .datastructs.labeled_metaphor_list import LabeledMetaphorList
+from .datastructs.labeled_metaphor import LabeledMetaphor
+from .datastructs.ngrams import CollocationList, parseConcreteness, parseNgrams
+from .datastructs.categories import Categories, parseCategories
+from . import utils
 
 NGRAMS_FILES = [ ("data/an2.txt", 2), ("data/an3.txt", 3), ("data/an4.txt", 4), ("data/an5.txt", 5)]
 CONCRETENESS_FILE = "data/concreteness.txt"

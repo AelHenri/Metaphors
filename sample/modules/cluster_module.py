@@ -1,8 +1,11 @@
 from .clustering.wordClusterList import WordClusterList
 from .clustering.parsing import parseNouns, parseVerbNet
 from .utils import writeToCSV
+from .datastructs.labeled_metaphor_list import LabeledMetaphorList
+from .datastructs.labeled_metaphor import LabeledMetaphor
 import csv
 import ast
+from . import utils
 
 VERBNET = "data/clustering/verbnet_150_50_200.log-preprocessed"
 NOUNS = "data/clustering/200_2000.log-preprocessed"
@@ -10,6 +13,7 @@ TROFI_TAGS = "data/clustering/trofi_tags_full.csv"
 
 RESULTS = "data/clustering/results.csv"
 
+# test the result to see if it has every words
 # Parse the verbnet and noun databases
 def getVerbNouns(verbPath, nounPath):
 	verbData = WordClusterList.fromFile(verbPath, parseVerbNet)
@@ -31,7 +35,7 @@ def getTagsFromCSV(path):
 			verbObjTags[(verb, noun)] = ast.literal_eval(row["Labels"])
 	return verbObjTags
 
-# Get a list of all the possible verb-noun couples in the database
+# Get a list of all the possible verb-noun couples in the database, returns a list of pairs of 2 lists, one list of verbs from the same cluster and one list of nouns from the same cluster
 def buildPairs(verbsData, nounsData):
 	return [(v, n) for v in verbsData for n in nounsData]
 
@@ -75,3 +79,53 @@ def buildDB():
 	tags = getTagsFromCSV(TROFI_TAGS)
 	results = tagPairs(verbs, nouns, tags)
 	writeToCSV(results, RESULTS, ["verb", "noun", "tag", "confidence"])
+
+def loadDB(path):
+	DB = {}
+	with open(path) as csvfile:
+		reader = csv.DictReader(csvfile)
+		for row in reader:
+			DB[(row["verb"], row["noun"])] = (row["tag"], float(row["confidence"]))
+	return DB
+
+def lookUpDB(DB, verb, noun):
+	if (verb, noun) in DB.keys():
+		result = DB[(verb, noun)]
+		if result[0] == "L":
+			return (False, result[1])
+		else:
+			return (True, result[1])
+	else:
+		return (False, 0.0)
+
+# MAIN FUNCTION
+def clusteringFunction(candidates):
+
+	results = LabeledMetaphorList()
+	DB = loadDB(RESULTS)
+
+	for c in candidates:
+		source = c.getSource()
+		target = c.getTarget()
+		if utils.VERBOSE:
+			print("###############################################################################")
+			print("SOURCE: " + source)
+			print("TARGET: " + target)
+
+		currentResult = lookUpDB(DB, source, target)
+		result = currentResult[0]
+		confidence = currentResult[1]
+
+		if utils.VERBOSE:
+			if confidence >= 0.5:
+				print("RESULT: " + str(result))
+				print("CONFIDENCE: " + str(confidence))
+			else:
+				print("RESULT: Unknown")
+				print("Verb/Noun pair not in database")
+
+		results.addResult(LabeledMetaphor(c, result, confidence))
+
+	return results
+
+
